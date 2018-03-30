@@ -1,0 +1,14 @@
+<h1>Notes</h1>
+<pre>App: {{ app }}</pre>
+
+{% for note in notes %}
+<div>
+    <b>{{note.created_at}}</b> {{note.text}}
+</div>
+{% endfor %}
+<h2>Create new note</h2>
+<form action="{% url 'notes:index' %}" method="post">
+    {% csrf_token %}
+    <input type="text" name="note" value="" />
+    <input type="submit" value="Send" />
+</form>

@@ -1,0 +1,26 @@
+upstream django {
+    # server unix:///path/to/your/mysite/mysite.sock; # for a file socket
+    server 127.0.0.1:8000;  # for a web port socket (we'll use this first)
+}
+
+server {
+	listen 80 default_server;
+#	listen [::]:80 default_server;
+
+	server_name ~^(?<subdomain>.*)\.localhost$;
+
+	root /var/www/html;
+	index index.html;
+
+	location / {
+		include uwsgi_params;
+	        uwsgi_pass django;
+
+		proxy_redirect     off;
+	        proxy_set_header   Host $host;
+		proxy_set_header   X-Real-IP $remote_addr;
+	        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header   X-Forwarded-Host $server_name;
+		uwsgi_param HTTP_CUSTOMER $subdomain;
+	}
+}
