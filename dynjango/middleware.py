@@ -31,3 +31,13 @@ def switch_middleware(get_response):
         return response
 
     return middleware
+
+
+class SwitchMiddleWare(object):
+    def process_request(self, request):
+        customer_name = request.META.get('HTTP_CUSTOMER', 'default')
+        print('\nDOING REQUEST USING {}'.format(customer_name))
+        _customer_settings.set_customer(customer_name)
+
+    def process_response(self, request, response):
+        return response
