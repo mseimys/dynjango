@@ -3,11 +3,9 @@ from django.conf import settings
 from django.http import HttpResponse
 
 from .customer_settings import _customer_settings
-# from django.db import connections
 
+# New style middleware Django 2.0+
 def switch_middleware(get_response):
-    # One-time configuration and initialization.
-
     def middleware(request):
         # Code to be executed for each request before
         # the view (and later middleware) are called.
@@ -17,22 +15,14 @@ def switch_middleware(get_response):
         # else:
         #     customer_name = 'test1'
         customer_name = request.META.get('HTTP_CUSTOMER', 'default')
-
         print('DOING REQUEST USING', customer_name)
-
-
         _customer_settings.set_customer(customer_name)
-
         response = get_response(request)
-
-        # Code to be executed for each request/response after
-        # the view is called.
-
         return response
 
     return middleware
 
-
+# Old style middleware
 class SwitchMiddleWare(object):
     def process_request(self, request):
         customer_name = request.META.get('HTTP_CUSTOMER', 'default')
